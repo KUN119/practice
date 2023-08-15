@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" id="file-to-upload" />
+    <button id="upload-button">Upload</button>
+</body>
+
+<script>
+    //upload 버튼 클릭시 이벤트
+    document.querySelector("#upload-button").addEventListener('click', async function(){
+        let upload = await uploadFile();
+
+        if(upload.error == 0)
+            alert('file uploaded successful');
+        else if (upload.error == 1)
+            alert('file uploading failed - ' + upload.message);
+    });
+
+    //async로 upload 함수 생성
+    async function uploadFile(){
+        //리턴 value
+        let return_data = {error: 0, message: ''};
+
+        try{
+            //파일을 선택하지 않았을시 No file selected 메시지 호출
+            if(document.querySelector("#file-to-upload").files.length == 0){
+                throw new Error('No file selected');
+            }
+            else{
+                //file data를 담을 FormData 객체 생성
+                let data = new FormData();
+                data.append('title', 'Sample title');
+                data.append('file', document.querySelector('#file-to-upload').files[0]);         
+
+                let response = await fetch('http://220.117.145.126:8080/api/upload/photo',{
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: data
+                });
+                
+                //요청이 실패했을 경우 error message
+                if(response.status != 200)
+                    throw new Error('HTTP response code != 200');
+
+                let json_response = await response.json();
+
+                if(json_response.error == 1)
+                    throw new Error(json_response.message);
+            }
+        }
+        
+        catch(e){
+            return_data = {error:1, message:e.message};
+        }
+
+        return return_data;
+    }
+</script>
+</html>

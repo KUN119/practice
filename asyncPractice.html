@@ -38,6 +38,11 @@
                 data.append('title', 'Sample title');
                 data.append('file', document.querySelector('#file-to-upload').files[0]);         
 
+                /* credentials: 쿠키를 전송하기 위해서 credentials 옵션을 설정함 
+                credentials: 'include' -> 자격증명이 포함된 인증서를 보내야 할 때
+                credentials: 'same-origin' -> 요청하려는 URL이 호출 스크립트와 동일한 origin을 가지고 있을 때만 자격증명을 전송해야 할 때
+                credentials: 'omit' -> 자격증명을 포함하지 않는 것을 원할 때
+                */
                 let response = await fetch('http://220.117.145.126:8080/api/upload/photo',{
                     method: 'POST',
                     credentials: 'same-origin',
